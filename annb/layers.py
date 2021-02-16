@@ -1,16 +1,19 @@
 import numpy as np
+
 from dataclasses import dataclass
+from annb.activation_functions import *
 
 
-class Layer(object):
+class Layer:
     _weights: np.array     # Matrix (n dimensionaler array) für die vershiedenen gewichte der vershiedenen Neuronen
     _biases: np.array      # Array mit einem Bias für jedes Neuron
     out: np.array          # Speichert das Ergebnis dieses Layers nach einem Pass.
 
-    def pass_forward(self, inp: np.array, act_func: callable) -> None:
+    def pass_forward(self, inp: np.array, act_func: Actfunc) -> None:
         """Führt einen Forwardpass mit angebenem Input und Aktivierungsfunktion durch und speichert das Ergebnis in DenseLayer.out"""
-        self.out = act_func(np.dot(inp, self._weights) + self._biases)
+        self.out = act_func.forward(np.dot(inp, self._weights) + self._biases)
 
+    #TODO: Überflüssig...
     def calc_loss(self, ideal: np.array, loss_func: callable) -> np.array:
         ...
 
@@ -28,4 +31,4 @@ class DenseLayer(Layer):
 @dataclass
 class LayerInfo:
     layer: Layer
-    act_func: callable
+    act_func: Actfunc

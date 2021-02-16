@@ -1,27 +1,10 @@
 import numpy as np
 
-
-class ActivationFunction(object):
-    """Verschiedene Aktivierungsfunktionen"""
-    @staticmethod
-    def linear(x: np.array) -> np.array:
-        return x
-
-    @staticmethod
-    def relu(x: np.array) -> np.array:
-        return np.maximum(0, x)
-
-    @staticmethod
-    def sigmoid(x: np.array) -> np.array:
-        return 1/(1+np.power(np.e, -x))
-
-    @staticmethod
-    def softmax(x: np.array) -> np.array:
-        exp = np.exp(x - np.max(x, axis=1, keepdims=True))
-        return exp / np.sum(exp, axis=1, keepdims=True)
+#TODO: Es ist unsinnig das hier in eine eigene Klasse zu packen
 
 
-class LossFunction(object):
+class LossFunction:
+    #TODO: Kann nach network_manager.py verschoben werden
     @staticmethod
     def cce(goal: np.array, prediction: np.array) -> np.array:
         # Es könnte vorkommen, dass prediction eine Null enthält. Deshalb werden werden alle Werte, die kleiner als 10^-9,
@@ -36,3 +19,15 @@ class LossFunction(object):
             ggoal.append(t)
 
         return -np.sum(np.log(prediction) * ggoal, axis=1)
+
+    @staticmethod
+    def cost(goal: np.array, prediction: np.array) -> np.array:
+        # Die Dimensionen von goal erweitern, damit es zu den dimensionen der Prediction passt.
+        ggoal = []
+        for g in goal:
+            t = [0] * (prediction.shape[1] - 1)
+            t.insert(g, 1)
+            ggoal.append(t)
+
+        return np.sum((np.array(ggoal) - prediction)**2)
+

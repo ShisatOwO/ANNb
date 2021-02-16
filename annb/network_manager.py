@@ -1,9 +1,10 @@
 import numpy as np
+
 from annb.layers import *
 from annb.func import *
 
 
-class NetworkManager(object):
+class NetworkManager:
     _layers: [LayerInfo, ]
     out: np.array
 
@@ -21,6 +22,7 @@ class NetworkManager(object):
         if self._lhidden is None:
             self._lhidden = []
         self._lhidden.append(layer)
+        self._merge_layers()
 
     def guess(self, inp: np.array) -> None:
         self._merge_layers()
@@ -40,4 +42,5 @@ class NetworkManager(object):
         inp = np.argmax(self.out, axis=1)
         return np.mean(inp == goal)
 
-
+    def back_prop(self, loss: float):
+        ...
