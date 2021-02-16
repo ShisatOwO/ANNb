@@ -27,7 +27,9 @@ class Relu(Actfunc):
 
     @staticmethod
     def backward(x: np.array) -> np.array:
-        return 1 if x < 0 else 0
+        out = np.zeros_like(x)
+        out[x > 0] = 1
+        return out
 
 
 class Sigmoid(Actfunc):
