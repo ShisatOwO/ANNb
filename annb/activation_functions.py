@@ -43,3 +43,10 @@ class Softmax(Actfunc):
     def forward(x: np.array) -> np.array:
         exp = np.exp(x - np.max(x, axis=1, keepdims=True))
         return exp / np.sum(exp, axis=1, keepdims=True)
+
+    @staticmethod
+    def cce_backward(x: np.array, dval: np.array) -> np.array:
+        x = np.argmax(x, axis=1) if len(x.shape) == 2 else x
+        out = dval.copy()
+        out[range(len(dval)), x] -= 1
+        return out / len(dval)

@@ -21,6 +21,13 @@ class LossFunction:
         return -np.sum(np.log(prediction) * ggoal, axis=1)
 
     @staticmethod
+    def reverse_cce(goal: np.array, d: np.array):
+        if len(goal.shape) == 1:
+            goal = np.eye(len(d[0]))[goal]
+        out = -goal / d
+        return out / len(d)
+
+    @staticmethod
     def cost(goal: np.array, prediction: np.array) -> np.array:
         # Die Dimensionen von goal erweitern, damit es zu den dimensionen der Prediction passt.
         ggoal = []
