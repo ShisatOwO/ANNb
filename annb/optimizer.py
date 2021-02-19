@@ -1,14 +1,11 @@
 import numpy as np
 
-from abc import ABC, abstractmethod
-
-
-class Optimizer(ABC):
-    @staticmethod
-    @abstractmethod
-    def optimize() -> None:
-        ...
+from annb.templates import *
 
 
 class BatchSGD(Optimizer):
-    ...
+    @staticmethod
+    def optimize(layer: Layer, learning_rate: float) -> None:
+        layer._weights -= learning_rate * layer._dw
+        layer._bias -= learning_rate * layer._db
+

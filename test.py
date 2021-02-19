@@ -9,7 +9,32 @@ from annb.actfunc import *
 from annb.optimizer import *
 
 
+nnfs.init()
+
+
 def main(*args, **kwargs) -> int:
+    # Test traing data
+    inp, ref = spiral_data(100, 3)
+
+    # Setup
+    d1_in = LayerInfo(DenseLayer(2, 3), Relu())
+    d2_out = LayerInfo(DenseLayer(3, 3), Softmax())
+    nmanager = NManager(d1_in, d2_out)
+
+    nmanager.guess(inp)
+    old_acc = nmanager.calc_acc(ref)
+
+    # Training
+    for i in range(1000+1):
+        nmanager.guess(inp)
+        loss = nmanager.calc_gradient(ref)
+        nmanager.optimize(BatchSGD())
+        print(f"Iteration:\t {i}")
+        print(f"Acc:\t {nmanager.calc_acc(ref)} ")
+        print(f"Loss:\t {np.mean(loss)}\n")
+
+    print(f"Acc improvement: {nmanager.calc_acc(ref) - old_acc}")
+
     return 1
 
 
