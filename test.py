@@ -2,44 +2,34 @@ import sys
 import nnfs
 
 from nnfs.datasets import spiral_data
-from annb.network_manager import NetworkManager
+
+from annb.n_manager import NManager
 from annb.layers import *
-from annb.func import *
-from annb.activation_functions import *
+from annb.actfunc import *
+from annb.optimizer import *
+
+
+nnfs.init()
 
 
 def main(*args, **kwargs) -> int:
-    # Training Data
-    x, y = spiral_data(100, 3)
+    # Test traing data
+    inp, ref = spiral_data(100, 3)
 
-    # Layer erstellen
-    l1_inp_dense = LayerInfo(DenseLayer(2, 3), Relu())
-    l2_out_dense = LayerInfo(DenseLayer(3, 3), Softmax())
+    # Setup
+    d1_in = LayerInfo(DenseLayer(2, 512), Relu())
+    lh1 = LayerInfo(DenseLayer(512, 10), Relu())
+    d2_out = LayerInfo(DenseLayer(10, 3), Softmax())
+    nmanager = NManager(d1_in, d2_out)
+    nmanager.add_layer(lh1)
+    nmanager.guess(inp)
+    nmanager.add_trainer(BatchSGD(1, 1e-3, 0.5))
 
-    # Network manager mit Layern initialisieren
-    n_manager = NetworkManager(l1_inp_dense, l2_out_dense)
-
-    # Ein forward pass durch netzwerk +
-    loss = np.mean(n_manager.calc_loss(x, y))
-
-    # Backward pass
-    """l2_out_dense.layer.pass_backward(n_manager.out, l2_out_dense.act_func, y)
-    l1_inp_dense.layer.pass_backward(l2_out_dense.layer.dinp, l1_inp_dense.act_func)"""
-
-    n_manager.back_prop(y)
-
-    print(n_manager.out[:5])
-    print(loss)
-    print(l1_inp_dense.layer.dweights, "\n")
-    print(l1_inp_dense.layer.dbiases, "\n")
-    print(l2_out_dense.layer.dweights, "\n")
-    print(l2_out_dense.layer.dbiases, "\n")
-
-
+    # Training
+    nmanager.train(10000, inp, ref)
 
     return 1
 
 
 if __name__ == "__main__":
     sys.exit(main(*sys.argv[1::]))
-
