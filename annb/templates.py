@@ -9,6 +9,17 @@ class Optimizer(ABC):
     def optimize(layer, learning_rate: float) -> None:
         ...
 
+    @abstractmethod
+    def __init__(self, learning_rate: float = None, decay: float = None, momentum: float = None) -> None:
+        self._initial_lr = learning_rate
+        self._decay = decay
+        self._momentum = momentum
+        self._lr = learning_rate
+
+    @abstractmethod
+    def train(self, network, iterations: int, dataset: [np.array, np.array]) -> None:
+        ...
+
 
 class Actfunc(ABC):
     @staticmethod

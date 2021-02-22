@@ -23,18 +23,10 @@ def main(*args, **kwargs) -> int:
     nmanager = NManager(d1_in, d2_out)
     nmanager.add_layer(lh1)
     nmanager.guess(inp)
-    old_acc = nmanager.calc_acc(ref)
+    nmanager.add_trainer(BatchSGD(1, 1e-3, 0.5))
 
     # Training
-    for i in range(6000+1):
-        nmanager.guess(inp)
-        loss = nmanager.calc_gradient(ref)
-        nmanager.optimize(BatchSGD())
-        print(f"Iteration:\t {i}")
-        print(f"Acc:\t {nmanager.calc_acc(ref)} ")
-        print(f"Loss:\t {np.mean(loss)}\n")
-
-    print(f"Acc improvement: {nmanager.calc_acc(ref) - old_acc}")
+    nmanager.train(10000, inp, ref)
 
     return 1
 

@@ -7,9 +7,14 @@ class NManager:
         self.out: np.array = None
 
         self._layers = [in_layer, out_layer]
+        self._network_optimizer = None
 
     def add_layer(self, layer: LayerInfo) -> None:
         self._layers.insert(-1, layer)
+
+    def add_trainer(self, optimizer: Optimizer) -> None:
+        self._network_optimizer = optimizer
+        self._network_optimizer.manager = self
 
     def guess(self, input: np.array) -> np.array:
         inp = input
@@ -18,9 +23,13 @@ class NManager:
         self.out = inp
         return inp
 
-    def optimize(self, optimizer: Optimizer, learning_rate: float = 1) -> None:
+    def optimize(self, optimizer: Optimizer, learning_rate: float = 1, decay: float = 0, iteration: int = 0) -> None:
         for layer in self._layers:
             layer.layer.optimize(optimizer, learning_rate)
+
+    def train(self, iterations: int, dataset: np.array, reference: np.array) -> None:
+        if self._network_optimizer is not None:
+            self._network_optimizer.train(self._layers, iterations, (dataset, reference))
 
     def calc_loss(self, reference: np.array) -> float:
         # Es könnte vorkommen, dass prediction eine Null enthält. Deshalb werden werden alle Werte, die kleiner als 10^-9,
