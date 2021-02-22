@@ -26,7 +26,7 @@ def main(*args, **kwargs) -> int:
     nmanager.add_trainer(BatchSGD(1, 1e-3, 0.5))
 
     # Training
-    nmanager.train(10000, inp, ref)
+    nmanager.train(2000, inp, ref)
 
     return 1
 

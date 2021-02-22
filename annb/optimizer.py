@@ -39,6 +39,7 @@ class BatchSGD(Optimizer):
                     else:
                         layer.layer.optimize(self, self._lr)
 
+                #TODD: In eigene methode printer verschieben
                 print(f"Iteration:\t\t{i}")
                 print(f"LR:\t\t{self._lr}")
                 print(f"Accuracy:\t\t{self.manager.calc_acc(dataset[1])}")
