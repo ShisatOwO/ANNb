@@ -25,7 +25,7 @@ class NManager:
     def calc_loss(self, reference: np.array) -> float:
         # Es könnte vorkommen, dass prediction eine Null enthält. Deshalb werden werden alle Werte, die kleiner als 10^-9,
         # Auf ein Milliardstel gesetzt (10^-9). Wenn ein wert Null wäre gabe es ein Fehler bei der Log Funktion.
-        prediction = np.clip(self.out, 1e-7, 1 - 1e-7)
+        prediction = np.clip(self.out, 1e-9, 1)
 
         # Die Dimensionen von goal erweitern, damit es zu den dimensionen der Prediction passt.
         ggoal = []

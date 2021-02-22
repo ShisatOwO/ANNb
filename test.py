@@ -17,15 +17,16 @@ def main(*args, **kwargs) -> int:
     inp, ref = spiral_data(100, 3)
 
     # Setup
-    d1_in = LayerInfo(DenseLayer(2, 3), Relu())
-    d2_out = LayerInfo(DenseLayer(3, 3), Softmax())
+    d1_in = LayerInfo(DenseLayer(2, 512), Relu())
+    lh1 = LayerInfo(DenseLayer(512, 10), Relu())
+    d2_out = LayerInfo(DenseLayer(10, 3), Softmax())
     nmanager = NManager(d1_in, d2_out)
-
+    nmanager.add_layer(lh1)
     nmanager.guess(inp)
     old_acc = nmanager.calc_acc(ref)
 
     # Training
-    for i in range(1000+1):
+    for i in range(6000+1):
         nmanager.guess(inp)
         loss = nmanager.calc_gradient(ref)
         nmanager.optimize(BatchSGD())
