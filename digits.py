@@ -26,9 +26,6 @@ def show_img(img: [[float, ], ], scaling: int = 10) -> None:
     img.show()
 
 
-#TODO: ADAM optimizer implentieren
-
-
 def main(*args, **kwargs) -> int:
     l1_dense = LayerInfo(DenseLayer(64, 64), Relu())
     l2_dense = LayerInfo(DenseLayer(64, 15), Relu())
@@ -39,19 +36,31 @@ def main(*args, **kwargs) -> int:
     n_manager.add_layer(l2_dense)
     n_manager.add_layer(l3_dense)
 
-    n_manager.add_trainer(BatchSGD(0.9, 5e-4, 0.2))
+    n_manager.add_trainer(BatchSGD(0.2, 5e-4, 0.1))
 
     data = digits.images.reshape((len(digits.images), -1))
     data = data[:1700]
     reference = digits.target[:1700]
 
-    n_manager.train(50000, data, reference)
+    n_manager.train(2500, data, reference)
 
-    """datax = np.array_split(data, 17)
-    referencex = np.array_split(reference, 17)
+    test = digits.images.reshape((len(digits.images), -1))
+    test_dat = test[1700:]
+    test_img = digits.images[1700:]
+    test_ref = digits.target[1700:]
 
-    for dat, ref in zip(datax, referencex):
-        n_manager.train(10000, dat, ref)"""
+    x = input("PLease Choose one out of 96 samples: ")
+    while x != "exit":
+        x = int(x)
+        if x >= 0 and 96 >= x:
+            show_img(test_img[x])
+            print(f"Showing the network a {test_ref[x]}...")
+            n_manager.guess(test_dat[x])
+            print(f"The network thinks that this is a {np.argmax(n_manager.out)}")
+            print(f"\n")
+            print(n_manager.out)
+        x = input("\n\nPlease choose one out of 96 samples: ")
+
 
     return 0
 
