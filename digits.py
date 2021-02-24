@@ -59,8 +59,8 @@ def main(*args, **kwargs) -> int:
             print(f"The network thinks that this is a {np.argmax(n_manager.out)}")
             print(f"\n")
             print(n_manager.out)
+            print(l3_dense.layer.out.copy())
         x = input("\n\nPlease choose one out of 96 samples: ")
-
 
     return 0
 
