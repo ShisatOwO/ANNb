@@ -10,21 +10,26 @@ class BatchSGD(Optimizer):
 
     @staticmethod
     def optimize(layer: Layer, learning_rate: float) -> None:
+        """Optimiert Gewichte und Bias von gegebenem Layer"""
         layer._weights -= learning_rate * layer._dw
         layer._bias -= learning_rate * layer._db
 
     def train(self, network, iterations: int, dataset: [np.array, np.array]) -> None:
-        # TODO: Error checking (überall eigentlich)
-        if self._initial_lr is not None and self._decay is not None:
+        """Trainiert Das Netzwerk"""
+        if self._initial_lr is not None and self._decay is not None:                # Prüfen, ob es _initial_lr und _decay überhaupt gibt
             for layer in network:
-                setattr(layer.layer, "w_mom", np.zeros_like(layer.layer._weights))
-                setattr(layer.layer, "b_mom", np.zeros_like(layer.layer._bias))
+                # Die Attribute werden hier auf diese Weise erstellt anstatt sie direkt im Konsttruktor vom Layer zu erstellen,
+                # weil jeder optimizer andere Attribute braucht. Deshalb ist es einfacher wenn der Opimizer sie selbst erstellt
+                # Die Idee dazu Stammt aus "Neural Networks from Scratch in Python"
+                setattr(layer.layer, "w_mom", np.zeros_like(layer.layer._weights))  # Ein Attribut w_mom in layer erstellen.
+                setattr(layer.layer, "b_mom", np.zeros_like(layer.layer._bias))     # Ein Attribut b_mom in layer erstellen.
 
             for i in range(iterations):
 
                 self.manager.guess(dataset[0])
                 self.manager.calc_gradient(dataset[1])
 
+                # Art Die Lernrate zu verkleinern aus "Neural Networks from Scratch in Python" übernommen.
                 self._lr = self._initial_lr * (1 / (1 + self._decay * i))
 
                 for layer in network:

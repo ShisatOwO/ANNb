@@ -11,10 +11,12 @@ from annb.optimizer import *
 from annb.n_manager import NManager
 
 
+# Der Datensatz
 digits = load_digits()
 
 
 def show_img(img: [[float, ], ], scaling: int = 10) -> None:
+    """Methode zum Anzeigen der Bilder"""
     im = img.copy()
     img = np.zeros((len(im), len(im), 3), dtype=np.uint8)
     for x in range(len(im)):
@@ -27,40 +29,48 @@ def show_img(img: [[float, ], ], scaling: int = 10) -> None:
 
 
 def main(*args, **kwargs) -> int:
-    l1_dense = LayerInfo(DenseLayer(64, 64), Relu())
-    l2_dense = LayerInfo(DenseLayer(64, 15), Relu())
-    l3_dense = LayerInfo(DenseLayer(15, 7), Relu())
-    l4_dense = LayerInfo(DenseLayer(7, 10), Softmax())
+    # Erstellung der Einzelnen Layer
+    l1_dense = LayerInfo(DenseLayer(64, 64), Relu())    # Input Layer
+    l2_dense = LayerInfo(DenseLayer(64, 15), Relu())    # Hidden Layer 1
+    l3_dense = LayerInfo(DenseLayer(15, 7), Relu())     # Hidden Layer 2
+    l4_dense = LayerInfo(DenseLayer(7, 10), Softmax())  # Output Layer
 
-    n_manager = NManager(l1_dense, l4_dense)
-    n_manager.add_layer(l2_dense)
-    n_manager.add_layer(l3_dense)
+    n_manager = NManager(l1_dense, l4_dense)    # Initialisierung des Netzwerk Managers mit dem In- und Output Layer
+    n_manager.add_layer(l2_dense)               # Hidden Layer 1 an den Netzwerk Mananger geben
+    n_manager.add_layer(l3_dense)               # Hidden Layer 1 an den Netzwerk Mananger geben
 
-    n_manager.add_trainer(BatchSGD(0.2, 5e-4, 0.1))
+    n_manager.add_trainer(BatchSGD(0.2, 5e-4, 0.1))     # Einen Trainer für Das netzwerk erstellen
 
+    # Den Datensatz vorbereiten. Form wird vom 8x8 zu 1x64 geändert
     data = digits.images.reshape((len(digits.images), -1))
+    test = digits.images.reshape((len(digits.images), -1))
+
+    # Zum Trainieren möchte ich nur 1700 von den 1797 Bildern benutzen
     data = data[:1700]
     reference = digits.target[:1700]
 
-    n_manager.train(2500, data, reference)
-
-    test = digits.images.reshape((len(digits.images), -1))
+    # Die restlichen 97 Bilder können zum Testen verwendet werden.
     test_dat = test[1700:]
     test_img = digits.images[1700:]
     test_ref = digits.target[1700:]
 
-    x = input("PLease Choose one out of 96 samples: ")
+    # Das Netzwerk trainieren.
+    n_manager.train(2500, data, reference)
+
+    # Das Netzwerk ist jetzt trainiert. nun können dem Netzwerk die Test Bilder gezeigt werden.
+    # Dazu wird der Benutzer aufgefordert, ein Bild aus dem Test Datensetz auszuwählen
+    x = input("Please choose one out of 96 imgaes to show it to the network: ")
     while x != "exit":
         x = int(x)
-        if x >= 0 and 96 >= x:
+        if 0 <= x <= 96:
             show_img(test_img[x])
             print(f"Showing the network a {test_ref[x]}...")
             n_manager.guess(test_dat[x])
             print(f"The network thinks that this is a {np.argmax(n_manager.out)}")
-            print(f"\n")
+            print(f"\nOutput of the Output Layer")
             print(n_manager.out)
-            print(l3_dense.layer.out.copy())
-        x = input("\n\nPlease choose one out of 96 samples: ")
+            print("\n")
+        x = input("\n\nPlease choose one out of 96 imgaes to show it to the network: ")
 
     return 0
 

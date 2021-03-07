@@ -23,10 +23,10 @@ def main(*args, **kwargs) -> int:
     nmanager = NManager(d1_in, d2_out)
     nmanager.add_layer(lh1)
     nmanager.guess(inp)
-    nmanager.add_trainer(BatchSGD(1, 1e-3, 0.5))
+    nmanager.add_trainer(BatchSGD(0.6, 0.6e-3, 0.7))
 
     # Training
-    nmanager.train(2000, inp, ref)
+    nmanager.train(3000, inp, ref)
 
     return 1
 
